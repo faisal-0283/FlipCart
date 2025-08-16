@@ -1,4 +1,19 @@
 from django.shortcuts import render
+from .models import Banner, Category, Product
+
+def index(request):
+    banners = Banner.objects.filter(is_active=True)  # get all active banners
+    popular_categories = Category.objects.filter(is_popular=True)
+    top_deals = Product.objects.filter(is_top_deal=True)
+    
+    return render(request, 'core/index.html', {
+        'banners': banners,
+        'popular_categories': popular_categories,
+        'top_deals': top_deals,
+    })
+
+
+
 
 def home(request):
     return render(request, 'core/index.html')
@@ -14,6 +29,13 @@ def faq(request):
 
 def terms(request):
     return render(request, 'core/terms.html')
+
+
+
+
+
+
+
 
 
 from django.contrib.auth import authenticate, login

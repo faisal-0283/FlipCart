@@ -5,3 +5,9 @@
 .card-title {
   font-weight: 600;
 }
+
+.card:hover {
+    transform: scale(1.05);         /* একটু বড় হবে hover এ */
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);  /* subtle shadow */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}

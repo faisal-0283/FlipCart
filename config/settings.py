@@ -16,6 +16,9 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -126,6 +129,8 @@ STATICFILES_DIRS = []    # Not needed unless using project-level static
 
 # When collecting static files for production
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+
 
 
 # Default primary key field type
