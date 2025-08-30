@@ -43,8 +43,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core',
     'accounts',
-
 ]
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -62,7 +63,6 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [BASE_DIR / 'templates'],
-        'DIRS': [],           # App-level template automatically detected
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

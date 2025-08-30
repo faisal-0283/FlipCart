@@ -1,57 +1,168 @@
 from django.shortcuts import render, redirect
-from .forms import CustomerSignUpForm, SellerSignUpForm
-
-def customer_signup(request):
-    if request.method == 'POST':
-        form = CustomerSignUpForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('login')  # Replace with your login page or home
-    else:
-        form = CustomerSignUpForm()
-    return render(request, 'accounts/signup_customer.html', {'form': form})
-
-
-def seller_signup(request):
-    if request.method == 'POST':
-        form = SellerSignUpForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('login')
-    else:
-        form = SellerSignUpForm()
-    return render(request, 'accounts/signup_seller.html', {'form': form})
-
-
-
-
-
-
-# accounts/views.py
-
-from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
-from .forms import CustomerLoginForm, SellerLoginForm
+from django.contrib.auth import get_user_model
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
-def customer_login_view(request):
+User = get_user_model()
+
+# ===============================
+# Customer Signup
+# ===============================
+def signup_customer(request):
     if request.method == 'POST':
-        form = CustomerLoginForm(request, data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            return redirect('home')  # or redirect to customer dashboard
-    else:
-        form = CustomerLoginForm()
-    return render(request, 'accounts/customer_login.html', {'form': form})
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirmPassword')
+
+        if password != confirm_password:
+            messages.error(request, "Passwords do not match")
+            return redirect('signup_customer')
+
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "Email already registered")
+            return redirect('signup_customer')
+
+        user = User.objects.create_user(
+            username=email, email=email, password=password, first_name=name, user_type='customer'
+        )
+        user.save()
+
+        messages.success(request, "Account created successfully! Please log in.")
+        return redirect('login_customer')
+
+    return render(request, 'accounts/signup.html', {'user_type': 'Customer'})
 
 
-def seller_login_view(request):
+# ===============================
+# Seller Signup
+# ===============================
+def signup_seller(request):
     if request.method == 'POST':
-        form = SellerLoginForm(request, data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirmPassword')
+
+        if password != confirm_password:
+            messages.error(request, "Passwords do not match")
+            return redirect('signup_seller')
+
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "Email already registered")
+            return redirect('signup_seller')
+
+        user = User.objects.create_user(
+            username=email, email=email, password=password, first_name=name, user_type='seller'
+        )
+        user.save()
+
+        messages.success(request, "Account created successfully! Please log in.")
+        return redirect('login_seller')
+
+    return render(request, 'accounts/signup.html', {'user_type': 'Seller'})
+
+
+# ===============================
+# Customer Login
+# ===============================
+def login_customer(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        user = authenticate(request, username=email, password=password)
+        if user and user.user_type == 'customer':  # CustomUser field অনুযায়ী
             login(request, user)
-            return redirect('home')  # or redirect to seller dashboard
+            return redirect('customer_dashboard')  # ঠিক আছে
+        else:
+            messages.error(request, "Invalid credentials for customer")
+            return redirect('login_customer')
+    return render(request, 'accounts/login.html', {'user_type': 'Customer'})
+
+
+
+# ===============================
+# Seller Login
+# ===============================
+def login_seller(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        user = authenticate(request, username=email, password=password)
+        if user and user.user_type == 'seller':
+            login(request, user)
+            return redirect('seller_dashboard')
+        else:
+            messages.error(request, "Invalid credentials for seller")
+            return redirect('login_seller')
+    return render(request, 'accounts/login.html', {'user_type': 'Seller'})
+
+
+# ===============================
+# Dashboard redirect
+# ===============================
+@login_required
+def dashboard(request):
+    """
+    Login করার পরে user কে redirect করবে তাদের type অনুযায়ী
+    """
+    if request.user.user_type == 'seller':
+        return redirect('seller_home')
+    elif request.user.user_type == 'customer':
+        return redirect('customer_home')
     else:
-        form = SellerLoginForm()
-    return render(request, 'accounts/seller_login.html', {'form': form})
+        return redirect('home')
+
+
+# ===============================
+# Seller & Customer Home Pages
+# ===============================
+@login_required
+def seller_home(request):
+    return render(request, 'accounts/seller_home.html')
+
+@login_required
+def customer_home(request):
+    return render(request, 'accounts/customer_home.html')
+
+
+# ===============================
+# Forgot Password (Optional / Future)
+# ===============================
+# def forgot_password(request):
+#     if request.method == 'POST':
+#         email = request.POST.get('email')
+#         try:
+#             user = User.objects.get(email=email)
+#             return redirect('reset_password', email=email)
+#         except User.DoesNotExist:
+#             messages.error(request, "Email not registered")
+#             return redirect('forgot_password')
+#     return render(request, 'accounts/forgot_password.html')
+
+
+# def reset_password(request, email):
+#     try:
+#         user = User.objects.get(email=email)
+#     except User.DoesNotExist:
+#         messages.error(request, "Invalid request")
+#         return redirect('forgot_password')
+#
+#     if request.method == 'POST':
+#         password = request.POST.get('password')
+#         confirm_password = request.POST.get('confirmPassword')
+#
+#         if password != confirm_password:
+#             messages.error(request, "Passwords do not match")
+#             return redirect('reset_password', email=email)
+#
+#         user.set_password(password)
+#         user.save()
+#         messages.success(request, "Password updated successfully! Please log in.")
+#         if user.user_type == 'customer':
+#             return redirect('login_customer')
+#         else:
+#             return redirect('login_seller')
+#
+#     return render(request, 'accounts/reset_password.html', {'email': email})

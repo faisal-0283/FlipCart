@@ -55,18 +55,10 @@
             <li><a class="dropdown-item" href="{% url 'signup_customer' %}">Sign Up as Customer</a></li>
             <li><a class="dropdown-item" href="{% url 'signup_seller' %}">Sign Up as Seller</a></li>
           </ul>
+
         </li>
 
-        {% comment %} <li class="nav-item dropdown mx-2">
-          <a class="nav-link dropdown-toggle text-white fw-semibold" href="#" role="button" data-bs-toggle="dropdown"
-            aria-expanded="false">
-            Sign Up
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="#">Sign Up as Customer</a></li>
-            <li><a class="dropdown-item" href="#">Sign Up as Seller</a></li>
-          </ul>
-        </li> {% endcomment %}
+        
 
         <!-- Login Dropdown -->
          <!-- Login Dropdown -->
@@ -76,24 +68,13 @@
             Log In
           </a>
           <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="{% url 'customer_login' %}">Login as Customer</a></li>
-            <li><a class="dropdown-item" href="{% url 'seller_login' %}">Login as Seller</a></li>
+            <li><a class="dropdown-item" href="{% url 'login_customer' %}">Login as Customer</a></li>
+            <li><a class="dropdown-item" href="{% url 'login_seller' %}">Login as Seller</a></li>
           </ul>
+
         </li>
 
-        {% comment %} <!-- Login Dropdown -->
-
-        {% comment %} <li class="nav-item dropdown mx-2">
-          <a class="nav-link dropdown-toggle text-white fw-semibold" href="#" role="button" data-bs-toggle="dropdown"
-            aria-expanded="false">
-            Log In
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="#">Login as Customer</a></li>
-            <li><a class="dropdown-item" href="#">Login as Seller</a></li>
-          </ul>
-        </li> {% endcomment %}
-
+        
         <!-- Cart Button -->
         <li class="nav-item mx-2">
           <a class="nav-link position-relative text-white fw-semibold" href="#">

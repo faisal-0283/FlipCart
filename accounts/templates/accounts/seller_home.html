@@ -1,0 +1,29 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Seller Dashboard</title>
+  <link href="{% static 'accounts/css/styles.css' %}" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <h1 class="mb-4">Welcome, {{ request.user.first_name }} (Seller)</h1>
+        <p>This is your Seller Dashboard.</p>
+
+        <!-- Seller Actions -->
+        <div class="list-group mt-4">
+          <a href="{% url 'create_post' %}" class="list-group-item list-group-item-action">Create New Product Post</a>
+          <a href="{% url 'manage_posts' %}" class="list-group-item list-group-item-action">Manage My Posts</a>
+          <a href="{% url 'orders' %}" class="list-group-item list-group-item-action">View Orders</a>
+          <a href="{% url 'logout' %}" class="list-group-item list-group-item-action text-danger">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,42 +1,102 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from .models import CustomUser
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.models import User
 
+# -----------------------------
+# Customer Sign Up Form
+# -----------------------------
 class CustomerSignUpForm(UserCreationForm):
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(attrs={
+            "placeholder": "Enter your email",
+            "class": "form-control"
+        })
+    )
+
     class Meta:
-        model = CustomUser
-        fields = ['username', 'email', 'password1', 'password2']
+        model = User
+        fields = ["username", "email", "password1", "password2"]
 
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.user_type = 'customer'
-        if commit:
-            user.save()
-        return user
+        widgets = {
+            "username": forms.TextInput(attrs={
+                "placeholder": "Enter username",
+                "class": "form-control"
+            }),
+            "password1": forms.PasswordInput(attrs={
+                "placeholder": "Enter password",
+                "class": "form-control"
+            }),
+            "password2": forms.PasswordInput(attrs={
+                "placeholder": "Confirm password",
+                "class": "form-control"
+            }),
+        }
 
+
+# -----------------------------
+# Seller Sign Up Form
+# -----------------------------
 class SellerSignUpForm(UserCreationForm):
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(attrs={
+            "placeholder": "Enter your email",
+            "class": "form-control"
+        })
+    )
+
+    shop_name = forms.CharField(
+        required=True,
+        widget=forms.TextInput(attrs={
+            "placeholder": "Enter your shop name",
+            "class": "form-control"
+        })
+    )
+
     class Meta:
-        model = CustomUser
-        fields = ['username', 'email', 'password1', 'password2']
+        model = User
+        fields = ["username", "email", "password1", "password2"]
 
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.user_type = 'seller'
-        if commit:
-            user.save()
-        return user
+        widgets = {
+            "username": forms.TextInput(attrs={
+                "placeholder": "Enter username",
+                "class": "form-control"
+            }),
+            "password1": forms.PasswordInput(attrs={
+                "placeholder": "Enter password",
+                "class": "form-control"
+            }),
+            "password2": forms.PasswordInput(attrs={
+                "placeholder": "Confirm password",
+                "class": "form-control"
+            }),
+        }
 
 
-# accounts/forms.py
-
-from django import forms
-
-from django.contrib.auth.forms import AuthenticationForm
-
+# -----------------------------
+# Customer Login Form
+# -----------------------------
 class CustomerLoginForm(AuthenticationForm):
-    username = forms.CharField(label="Email / Username", max_length=100)
-    password = forms.CharField(widget=forms.PasswordInput)
+    username = forms.CharField(widget=forms.TextInput(attrs={
+        "placeholder": "Enter username",
+        "class": "form-control"
+    }))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={
+        "placeholder": "Enter password",
+        "class": "form-control"
+    }))
 
+
+# -----------------------------
+# Seller Login Form
+# -----------------------------
 class SellerLoginForm(AuthenticationForm):
-    username = forms.CharField(label="Seller Email / Username", max_length=100)
-    password = forms.CharField(widget=forms.PasswordInput)
+    username = forms.CharField(widget=forms.TextInput(attrs={
+        "placeholder": "Enter seller username",
+        "class": "form-control"
+    }))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={
+        "placeholder": "Enter password",
+        "class": "form-control"
+    }))
