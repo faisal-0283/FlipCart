@@ -1,0 +1,36 @@
+{% extends "core/base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h3>Your Cart</h3>
+    {% if cart_items %}
+    <table class="table mt-3">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart_items %}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>৳{{ item.product.price }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>৳{{ item.total_price }}</td>
+                <td>
+                    <a href="{% url 'cart:remove_cart_item' item.id %}" class="btn btn-sm btn-danger">Remove</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h5>Total Price: ৳{{ total }}</h5>
+    <a href="{% url 'orders:checkout' %}" class="btn btn-success mt-3">Checkout / Confirm Order</a>
+    {% else %}
+    <p>Your cart is empty.</p>
+    {% endif %}
+</div>
+{% endblock %}

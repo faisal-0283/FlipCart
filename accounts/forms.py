@@ -100,3 +100,5 @@ class SellerLoginForm(AuthenticationForm):
         "placeholder": "Enter password",
         "class": "form-control"
     }))
+
+

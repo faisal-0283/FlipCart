@@ -9,3 +9,6 @@ class CustomUser(AbstractUser):
         ('seller', 'Seller'),
     )
     user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, default='customer')
+
+
+

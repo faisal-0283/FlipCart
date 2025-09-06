@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
+from django.contrib.auth.views import LogoutView
+
 
 urlpatterns = [
     path('signup/customer/', views.signup_customer, name='signup_customer'),
@@ -9,17 +11,24 @@ urlpatterns = [
     path('login/seller/', views.login_seller, name='login_seller'),
    
 
+
+
     # Dashboard URLs
     path('dashboard/', views.dashboard, name='dashboard'),
     path('dashboard/customer/', views.customer_home, name='customer_dashboard'),
     path('dashboard/seller/', views.seller_home, name='seller_dashboard'),
     
+    path('logout/', auth_views.LogoutView.as_view(next_page='core:home'), name='logout'),
     
-    # Logout for customer
-    path('logout/', auth_views.LogoutView.as_view(next_page='login_customer'), name='logout'),
 
-    # Logout for seller (optional)
-    path('logout/seller/', auth_views.LogoutView.as_view(next_page='login_seller'), name='seller_logout'),
+
+    path("dashboard/seller/", views.seller_home, name="seller_home"),
+    path("dashboard/seller/create-post/", views.create_post, name="create_post"),
+    path("dashboard/seller/manage-posts/", views.manage_posts, name="manage_posts"),
+    path("dashboard/seller/orders/", views.orders, name="orders"),
+
+    
+
 
 
     

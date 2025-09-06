@@ -1,0 +1,33 @@
+{% extends "core/base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h3>Checkout / Confirm Order</h3>
+    <table class="table mt-3">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart_items %}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>৳{{ item.product.price }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>৳{{ item.total_price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h5>Total: ৳{{ total }}</h5>
+
+    <form action="{% url 'orders:checkout' %}" method="POST">
+       {% csrf_token %}
+       <button type="submit" class="btn btn-success">Confirm Order</button>
+    </form>
+
+</div>
+{% endblock %}

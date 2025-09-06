@@ -3,6 +3,8 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from core.models import Product
+
 
 User = get_user_model()
 
@@ -72,13 +74,14 @@ def login_customer(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
         user = authenticate(request, username=email, password=password)
-        if user and user.user_type == 'customer':  # CustomUser field অনুযায়ী
+        if user and user.user_type == 'customer':  
             login(request, user)
-            return redirect('customer_dashboard')  # ঠিক আছে
+            return redirect('customer_dashboard')  
         else:
             messages.error(request, "Invalid credentials for customer")
             return redirect('login_customer')
     return render(request, 'accounts/login.html', {'user_type': 'Customer'})
+
 
 
 
@@ -118,9 +121,31 @@ def dashboard(request):
 # ===============================
 # Seller & Customer Home Pages
 # ===============================
+
+
+
+# ===============================
+# Seller Dashboard
+# ===============================
 @login_required
 def seller_home(request):
-    return render(request, 'accounts/seller_home.html')
+    my_products = Product.objects.filter(seller=request.user)
+    top_deals = Product.objects.filter(is_top_deal=True)
+    total_orders_count = Order.objects.filter(product__seller=request.user).count()
+    total_earnings = sum([o.total_price for o in Order.objects.filter(product__seller=request.user)])
+    
+    context = {
+        'my_products': my_products,
+        'top_deals': top_deals,
+        'my_products_count': my_products.count(),
+        'total_orders_count': total_orders_count,
+        'total_earnings': total_earnings,
+    }
+    return render(request, 'accounts/seller_home.html', context)
+
+
+
+
 
 @login_required
 def customer_home(request):
@@ -166,3 +191,17 @@ def customer_home(request):
 #             return redirect('login_seller')
 #
 #     return render(request, 'accounts/reset_password.html', {'email': email})
+def seller_home(request):
+    return render(request, "accounts/seller_home.html")
+
+def create_post(request):
+    return render(request, "accounts/create_post.html")
+
+def manage_posts(request):
+    return render(request, "accounts/manage_posts.html")
+
+def orders(request):
+    return render(request, "accounts/orders.html")
+
+
+

@@ -26,13 +26,32 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
+     
     path('admin/', admin.site.urls),
-    path('', include('core.urls')),
-    #path('', views.home, name='home'),
-    path('accounts/', include('accounts.urls')),
+    # path('', include('core.urls')),
+    path('', views.home, name='home'),
     
+    path('accounts/', include('accounts.urls')),
+    # path("", include("core.urls")), 
+
+
+    # path('', include(('core.urls', 'core'), namespace='core')), 
+
+    # path('cart/', include('cart.urls')),
+
+
+
+    # path('', include('core.urls', namespace='core')),
+
+
+
+    path('cart/', include('cart.urls', namespace='cart')),
+    path('orders/', include('orders.urls', namespace='orders')),
+    path('', include(('core.urls', 'core'), namespace='core')),
 
     
+    
+
 ]
 
 

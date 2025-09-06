@@ -1,29 +1,161 @@
 {% load static %}
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Seller Dashboard</title>
-  <link href="{% static 'accounts/css/styles.css' %}" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Seller Dashboard – FlipCart</title>
+  <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-  <div class="container py-5">
-    <div class="row justify-content-center">
-      <div class="col-md-8">
-        <h1 class="mb-4">Welcome, {{ request.user.first_name }} (Seller)</h1>
-        <p>This is your Seller Dashboard.</p>
 
-        <!-- Seller Actions -->
-        <div class="list-group mt-4">
-          <a href="{% url 'create_post' %}" class="list-group-item list-group-item-action">Create New Product Post</a>
-          <a href="{% url 'manage_posts' %}" class="list-group-item list-group-item-action">Manage My Posts</a>
-          <a href="{% url 'orders' %}" class="list-group-item list-group-item-action">View Orders</a>
-          <a href="{% url 'logout' %}" class="list-group-item list-group-item-action text-danger">Logout</a>
-        </div>
+{% include 'core/partials/navbar.html' %}
+
+<div class="container-fluid mt-4">
+  <div class="row">
+
+    <!-- Sidebar -->
+    <div class="col-md-3 col-lg-2 mb-4">
+      <div class="card shadow-sm p-3 h-100">
+        <h5 class="mb-3">Seller Panel</h5>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item"><a href="{% url 'seller_home' %}" class="text-decoration-none">Dashboard</a></li>
+          <li class="list-group-item"><a href="{% url 'create_post' %}" class="text-decoration-none">Add Product</a></li>
+          <li class="list-group-item"><a href="{% url 'manage_posts' %}" class="text-decoration-none">Manage Products</a></li>
+          <li class="list-group-item"><a href="{% url 'orders' %}" class="text-decoration-none">Orders</a></li>
+         
+          <!-- Logout button -->
+          <li class="list-group-item p-0 m-0">
+            <form method="post" action="{% url 'logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="list-group-item list-group-item-action text-danger w-100 text-start border-0 bg-transparent">
+               Logout
+              </button>
+            </form>
+          </li>
+
+        </ul>
       </div>
     </div>
+
+    <!-- Main Content -->
+    <div class="col-md-9 col-lg-10">
+      
+      <!-- Welcome Card -->
+      <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+          <h4 class="card-title">Welcome, {{ request.user.first_name }}</h4>
+          <p class="card-text">Here is an overview of your seller activities.</p>
+        </div>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+          <div class="card text-white bg-primary shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">My Products</h5>
+              <p class="card-text fs-3">{{ my_products_count }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="card text-white bg-success shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">Total Orders</h5>
+              <p class="card-text fs-3">{{ total_orders_count }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="card text-white bg-warning shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">Earnings</h5>
+              <p class="card-text fs-3">৳{{ total_earnings }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- My Products Table -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">My Products</h5>
+        </div>
+        <div class="card-body table-responsive">
+          <table class="table table-hover align-middle">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Old Price</th>
+                <th>Top Deal</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for product in my_products %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td><img src="{{ product.image.url }}" alt="{{ product.name }}" width="60"></td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.category.name }}</td>
+                <td>৳{{ product.price }}</td>
+                <td>{% if product.old_price %}৳{{ product.old_price }}{% else %}-{% endif %}</td>
+                <td>{% if product.is_top_deal %}✅{% else %}-{% endif %}</td>
+                <td>
+                  <a href="{% url 'edit_post' product.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                  <a href="{% url 'delete_post' product.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="8" class="text-center">No products added yet.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Top Deals Section -->
+      <div class="mb-5">
+        <h5 class="mb-3">Top Deals</h5>
+        <div class="row g-3">
+          {% for product in top_deals %}
+          <div class="col-6 col-md-3 col-lg-2">
+            <div class="card text-center shadow-sm position-relative">
+              <img src="{{ product.image.url }}" alt="{{ product.name }}" class="card-img-top" style="height: 180px; object-fit: cover;">
+              {% if product.old_price %}
+              <span class="badge bg-danger position-absolute top-0 start-0 m-2">
+                {{ product.discount_percentage }}% OFF
+              </span>
+              {% endif %}
+              <div class="card-body p-2">
+                <p class="card-title mb-1 fw-semibold">{{ product.name }}</p>
+                <p class="mb-0 fw-bold">৳{{ product.price }}</p>
+                {% if product.old_price %}
+                  <del class="text-muted" style="font-size: 0.8rem;">৳{{ product.old_price }}</del>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <p>No top deals available.</p>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div>
   </div>
+</div>
+
+{% include 'core/partials/footer.html' %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

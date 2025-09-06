@@ -1,35 +1,20 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>FlipCart – Marketplace</title>
-  <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
+{% extends "core/base.html" %}
 
-{% include 'core/partials/navbar.html' %}
+{% block content %}
 
 <!-- Banner Slideshow -->
 <div class="container mt-4">
   <div id="bannerCarousel" class="carousel slide position-relative overflow-hidden rounded-3 shadow-sm" data-bs-ride="carousel">
     <div class="carousel-inner">
-
       {% for b in banners %}
       <div class="carousel-item {% if forloop.first %}active{% endif %}">
-        <!-- Fixed size image -->
         <img src="{{ b.image.url }}" alt="{{ b.title }}" 
-             class="d-block w-100"
-             style="object-fit: cover; height: 400px;">
-
-        <!-- Overlay Text -->
+             class="d-block w-100" style="object-fit: cover; height: 400px;">
         <div class="position-absolute top-50 start-50 translate-middle text-white text-center px-3">
           <h1 class="display-4 fw-bold text-shadow">{{ b.title }}</h1>
           {% if b.subtitle %}
             <p class="lead text-shadow">{{ b.subtitle }}</p>
           {% endif %}
-          <a href="#" class="btn btn-primary btn-lg">Start Selling</a>
         </div>
       </div>
       {% empty %}
@@ -38,14 +23,10 @@
         <div class="position-absolute top-50 start-50 translate-middle text-white text-center px-3">
           <h1 class="display-4 fw-bold text-shadow">Welcome to FlipCart</h1>
           <p class="lead text-shadow">Discover products from trusted vendors across Bangladesh.</p>
-          <a href="#" class="btn btn-primary btn-lg">Start Selling</a>
         </div>
       </div>
       {% endfor %}
-
     </div>
-
-    <!-- Carousel Controls -->
     <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev">
       <span class="carousel-control-prev-icon"></span>
     </button>
@@ -55,24 +36,142 @@
   </div>
 </div>
 
-
-
-
-
-
-
 <!-- Popular Categories -->
 <div class="container mt-5">
   <h3 class="mb-4 fw-bold">Popular Categories</h3>
-  
   <div class="row g-3">
     {% for cat in popular_categories %}
     <div class="col-6 col-md-3 col-lg-2">
       <div class="card text-center shadow-sm rounded-3">
-        <img src="{{ cat.image.url }}" class="card-img-top" alt="{{ cat.name }}" 
-             style="height: 120px; object-fit: cover;">
+        <!-- Clickable category image -->
+        <a href="{% url 'core:search' %}?q={{ cat.name }}">
+          <img src="{{ cat.image.url }}" class="card-img-top" alt="{{ cat.name }}" style="height: 120px; object-fit: cover;">
+        </a>
         <div class="card-body p-2">
-          <p class="card-title mb-0 fw-semibold">{{ cat.name }}</p>
+          <p class="card-title mb-0 fw-semibold">
+            <a href="{% url 'core:search' %}?q={{ cat.name }}" class="text-decoration-none text-dark">
+              {{ cat.name }}
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+      <p>No popular categories available.</p>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Top Deals -->
+<div class="container mt-5">
+  <h3 class="mb-4 fw-bold">Top Deals</h3>
+  <div class="row g-3">
+    {% for p in top_deals %}
+    <div class="col-6 col-md-3 col-lg-2">
+      <div class="card text-center shadow-sm rounded-3 deal-card position-relative">
+        <!-- Clickable image to product detail page -->
+        <a href="{% url 'core:product_detail' p.id %}">
+          <img src="{{ p.image.url }}" class="card-img-top" alt="{{ p.name }}" style="height: 180px; object-fit: cover;">
+        </a>
+        {% if p.old_price %}
+        <span class="badge bg-danger position-absolute top-0 start-0 m-2">{{ p.discount_percentage }}% OFF</span>
+        {% endif %}
+        <div class="card-body p-2">
+          <a href="{% url 'core:product_detail' p.id %}" class="text-decoration-none text-dark">
+            <p class="card-title mb-1 fw-semibold">{{ p.name }}</p>
+          </a>
+          <p class="mb-0 fw-bold">৳{{ p.price }}</p>
+          {% if p.old_price %}
+            <del class="text-muted" style="font-size: 0.8rem;">৳{{ p.old_price }}</del>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% empty %}
+      <p>No top deals available.</p>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} {% extends "core/base.html" %}
+
+{% block content %}
+
+<!-- Banner Slideshow -->
+<div class="container mt-4">
+  <div id="bannerCarousel" class="carousel slide position-relative overflow-hidden rounded-3 shadow-sm" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      {% for b in banners %}
+      <div class="carousel-item {% if forloop.first %}active{% endif %}">
+        <img src="{{ b.image.url }}" alt="{{ b.title }}" 
+             class="d-block w-100" style="object-fit: cover; height: 400px;">
+        <div class="position-absolute top-50 start-50 translate-middle text-white text-center px-3">
+          <h1 class="display-4 fw-bold text-shadow">{{ b.title }}</h1>
+          {% if b.subtitle %}
+            <p class="lead text-shadow">{{ b.subtitle }}</p>
+          {% endif %}
+        </div>
+      </div>
+      {% empty %}
+      <div class="carousel-item active">
+        <img src="https://picsum.photos/1200/400" class="d-block w-100" style="object-fit: cover; height: 400px;">
+        <div class="position-absolute top-50 start-50 translate-middle text-white text-center px-3">
+          <h1 class="display-4 fw-bold text-shadow">Welcome to FlipCart</h1>
+          <p class="lead text-shadow">Discover products from trusted vendors across Bangladesh.</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#bannerCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon"></span>
+    </button>
+  </div>
+</div>
+
+<!-- Popular Categories -->
+<div class="container mt-5">
+  <h3 class="mb-4 fw-bold">Popular Categories</h3>
+  <div class="row g-3">
+    {% for cat in popular_categories %}
+    <div class="col-6 col-md-3 col-lg-2">
+      <div class="card text-center shadow-sm rounded-3">
+        <!-- Clickable category image -->
+        <a href="{% url 'core:search' %}?q={{ cat.name }}">
+          <img src="{{ cat.image.url }}" class="card-img-top" alt="{{ cat.name }}" style="height: 120px; object-fit: cover;">
+        </a>
+        <div class="card-body p-2">
+          <p class="card-title mb-0 fw-semibold">
+            <a href="{% url 'core:search' %}?q={{ cat.name }}" class="text-decoration-none text-dark">
+              {{ cat.name }}
+            </a>
+          </p>
         </div>
       </div>
     </div>
@@ -86,24 +185,14 @@
 <!-- Top Deals -->
 <div class="container mt-5">
   <h3 class="mb-4 fw-bold">Top Deals</h3>
-  
   <div class="row g-3">
     {% for p in top_deals %}
     <div class="col-6 col-md-3 col-lg-2">
       <div class="card text-center shadow-sm rounded-3 deal-card position-relative">
-        
-        <!-- Product Image -->
-        <img src="{{ p.image.url }}" class="card-img-top" alt="{{ p.name }}" 
-             style="height: 180px; object-fit: cover;">
-
-        <!-- Discount Badge -->
+        <img src="{{ p.image.url }}" class="card-img-top" alt="{{ p.name }}" style="height: 180px; object-fit: cover;">
         {% if p.old_price %}
-        <span class="badge bg-danger position-absolute top-0 start-0 m-2">
-          {{ p.discount_percentage }}% OFF
-        </span>
+        <span class="badge bg-danger position-absolute top-0 start-0 m-2">{{ p.discount_percentage }}% OFF</span>
         {% endif %}
-        
-        <!-- Card Body -->
         <div class="card-body p-2">
           <p class="card-title mb-1 fw-semibold">{{ p.name }}</p>
           <p class="mb-0 fw-bold">৳{{ p.price }}</p>
@@ -119,234 +208,9 @@
   </div>
 </div>
 
-
-{% include 'core/partials/footer.html' %}
-
-<!-- JS for Bootstrap -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<a href="{% url 'core:product_detail' p.id %}">
+    <img src="{{ p.image.url }}" class="card-img-top" alt="{{ p.name }}" style="height: 180px; object-fit: cover;">
+</a>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{% comment %} {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>FlipCart – Marketplace</title>
-  <link rel="stylesheet" href="{% static 'css/style.css' %}">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-
-{% include 'core/partials/navbar.html' %} {% endcomment %}
-
-<!-- Hero Banner -->
-
-{% comment %} <div class="container mt-4">
-  <div class="position-relative overflow-hidden rounded-3 shadow-sm">
-    <img src="https://picsum.photos/1200/400" alt="Banner Image" class="img-fluid w-100" style="object-fit: cover; height: 400px;">
-    <div class="position-absolute top-50 start-50 translate-middle text-white text-center px-3">
-      <h1 class="display-4 fw-bold text-shadow">Welcome to FlipCart</h1>
-      <p class="lead text-shadow">Discover products from trusted vendors across Bangladesh. Free to join, easy to sell!</p>
-      <a href="#" class="btn btn-primary btn-lg">Start Selling</a>
-    </div>
-  </div>
-</div> {% endcomment %}
-
-
-
-{% comment %} <!-- Banner -->
-{% if banner %}
-    <img src="{{ banner.image.url }}" alt="{{ banner.title }}" style="width: 100%; height: 400px; object-fit: cover;">
-{% else %}
-    <p>No banner available</p>
-{% endif %}
-
-
-<!-- Popular Categories -->
-<h3>Popular Categories</h3>
-<div>
-{% for cat in popular_categories %}
-    <div>
-        <img src="{{ cat.image.url }}" alt="{{ cat.name }}">
-        <p>{{ cat.name }}</p>
-    </div>
-{% endfor %}
-</div>
-
-<!-- Top Deals -->
-<h3>Top Deals</h3>
-<div>
-{% for p in top_deals %}
-    <div>
-        <img src="{{ p.image.url }}" alt="{{ p.name }}">
-        <p>{{ p.name }} - ৳{{ p.price }}</p>
-        {% if p.old_price %}
-            <del>৳{{ p.old_price }}</del>
-            <span>{{ p.discount_percentage }}% OFF</span>
-        {% endif %}
-    </div>
-{% endfor %}
-</div>
- {% endcomment %}
-
-<!-- Categories -->
-{% comment %} <div class="container my-5">
-  <h3 class="mb-4">Popular Categories</h3>
-  <div class="row text-center">
-    {% for cat in 'abcd' %}
-    <div class="col-md-3 mb-4">
-      <div class="card shadow-sm h-100">
-    
-        <img src="https://picsum.photos/150?random=1" alt="Category 1" class="card-img-top">
-        <img src="https://picsum.photos/150?random=2" alt="Category 2" class="card-img-top">
-        <img src="https://picsum.photos/150?random=3" alt="Category 3" class="card-img-top">
-
-        
-
-        <div class="card-body">
-          <h5 class="card-title">Category {{ forloop.counter }}</h5>
-        </div>
-      </div>
-    </div>
-    {% endfor %}
-  </div>
-</div> {% endcomment %}
-{% comment %} <div class="container my-5">
-  <h3 class="mb-4">Popular Categories</h3>
-  <div class="row text-center">
-    <!-- Category Images Loop -->
-    <div class="col-md-3 mb-4" >
-      <div class="card shadow-sm h-100">
-        <img src="https://picsum.photos/150?random=1" alt="Category 1" class="card-img-top" />
-        <div class="card-body">
-          <h5 class="card-title">Category 1</h5>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3 mb-4" >
-      <div class="card shadow-sm h-100">
-        <img src="https://picsum.photos/150?random=2" alt="Category 2" class="card-img-top" />
-        <div class="card-body">
-          <h5 class="card-title">Category 2</h5>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3 mb-4" >
-      <div class="card shadow-sm h-100">
-        <img src="https://picsum.photos/150?random=3" alt="Category 3" class="card-img-top" />
-        <div class="card-body">
-          <h5 class="card-title">Category 3</h5>
-        </div>
-      </div>
-    </div>
-  </div>
-</div> {% endcomment %}
-
-
-
-
-<!-- Featured Products -->
-{% comment %} <div class="container my-5">
-  <h3 class="mb-4">Top Deals</h3>
-  <div class="row">
-    {% for i in '1234' %}
-    <div class="col-md-3 mb-4">
-      <div class="card shadow-sm h-100">
-      
-
-        <img src="https://picsum.photos/250/180?random=4" alt="Product 1" class="card-img-top">
-        <img src="https://picsum.photos/250/180?random=5" alt="Product 2" class="card-img-top">
-        <img src="https://picsum.photos/250/180?random=6" alt="Product 3" class="card-img-top">
-        <div class="card-body">
-          <h5 class="card-title">Product {{ forloop.counter }}</h5>
-          <p class="card-text text-danger">৳999 <span class="text-muted text-decoration-line-through">৳1299</span></p>
-          <a href="#" class="btn btn-sm btn-outline-primary">Buy Now</a>
-        </div>
-      </div>
-    </div>
-    {% endfor %}
-  </div>
-</div> {% endcomment %}
-
-
-{% comment %} <div class="container my-5">
-  <h3 class="mb-4">Top Deals</h3>
-  <div class="row">
-    
-    <div class="col-md-3 mb-4">
-      <div class="card shadow-sm h-100">
-        <img src="https://picsum.photos/250/180?random=1" alt="Product 1" class="card-img-top" />
-        <div class="card-body">
-          <h5 class="card-title">Product 1</h5>
-          <p class="card-text text-danger">৳999 <span class="text-muted text-decoration-line-through">৳1299</span></p>
-          <a href="#" class="btn btn-sm btn-outline-primary">Buy Now</a>
-        </div>
-      </div>
-    </div>
-    
-    <div class="col-md-3 mb-4">
-      <div class="card shadow-sm h-100">
-        <img src="https://picsum.photos/250/180?random=2" alt="Product 2" class="card-img-top" />
-        <div class="card-body">
-          <h5 class="card-title">Product 2</h5>
-          <p class="card-text text-danger">৳1299 <span class="text-muted text-decoration-line-through">৳1599</span></p>
-          <a href="#" class="btn btn-sm btn-outline-primary">Buy Now</a>
-        </div>
-      </div>
-    </div>
-    
-    <div class="col-md-3 mb-4">
-      <div class="card shadow-sm h-100">
-        <img src="https://picsum.photos/250/180?random=3" alt="Product 3" class="card-img-top" />
-        <div class="card-body">
-          <h5 class="card-title">Product 3</h5>
-          <p class="card-text text-danger">৳799 <span class="text-muted text-decoration-line-through">৳999</span></p>
-          <a href="#" class="btn btn-sm btn-outline-primary">Buy Now</a>
-        </div>
-      </div>
-    </div>
-    
-    <div class="col-md-3 mb-4">
-      <div class="card shadow-sm h-100">
-        <img src="https://picsum.photos/250/180?random=4" alt="Product 4" class="card-img-top" />
-        <div class="card-body">
-          <h5 class="card-title">Product 4</h5>
-          <p class="card-text text-danger">৳1499 <span class="text-muted text-decoration-line-through">৳1799</span></p>
-          <a href="#" class="btn btn-sm btn-outline-primary">Buy Now</a>
-        </div>
-      </div>
-    </div>
-    
-  </div>
-</div>
- {% endcomment %}
-
-
-
-
-
-
-
-
+{% endblock %} {% endcomment %}

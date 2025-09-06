@@ -29,6 +29,8 @@ class Product(models.Model):
     image = models.ImageField(upload_to='products/')
     is_top_deal = models.BooleanField(default=False)
 
+    description = models.TextField(blank=True, null=True)  
+
     def discount_percentage(self):
         if self.old_price:
             return round(((self.old_price - self.price) / self.old_price) * 100)
@@ -36,3 +38,4 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+

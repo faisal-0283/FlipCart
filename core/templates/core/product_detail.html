@@ -1,0 +1,58 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-5">
+            <img src="{{ product.image.url }}" class="img-fluid" alt="{{ product.name }}">
+        </div>
+        <div class="col-md-7">
+            <h2>{{ product.name }}</h2>
+            <p class="fw-bold">৳{{ product.price }}</p>
+            {% if product.old_price %}
+                <del class="text-muted">৳{{ product.old_price }}</del>
+                <span class="badge bg-danger">{{ product.discount_percentage }}% OFF</span>
+            {% endif %}
+            <hr>
+            <p>{{ product.description }}</p>
+
+            <!-- Add to Cart Form -->
+            <form action="{% url 'cart:add_to_cart' product.id %}" method="POST">
+               {% csrf_token %}
+               <button type="submit" class="btn btn-success">Add to Cart</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+{% comment %} {% extends "core/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-5">
+            <img src="{{ product.image.url }}" class="img-fluid" alt="{{ product.name }}">
+        </div>
+        <div class="col-md-7">
+            <h2>{{ product.name }}</h2>
+            <p class="fw-bold">৳{{ product.price }}</p>
+            {% if product.old_price %}
+                <del class="text-muted">৳{{ product.old_price }}</del>
+                <span class="badge bg-danger">{{ product.discount_percentage }}% OFF</span>
+            {% endif %}
+            <hr>
+            <p>{{ product.description }}</p>
+            <form action="{% url 'cart:add_to_cart' product.id %}" method="POST">
+               {% csrf_token %}
+              <button type="submit" class="btn btn-success">Add to Cart</button>
+            </form>
+
+
+            
+        </div>
+    </div>
+</div>
+{% endblock %} {% endcomment %}
